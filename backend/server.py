@@ -24,6 +24,7 @@ from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
 from pipecat.pipeline.task import PipelineParams, PipelineTask
 from pipecat.processors.aggregators.llm_context import LLMContext
+from pipecat.processors.aggregators.llm_response_universal import LLMContextAggregatorPair
 from pipecat.processors.frame_processor import FrameProcessor
 from pipecat.serializers.base_serializer import FrameSerializer
 from pipecat.services.elevenlabs.stt import ElevenLabsSTTService
@@ -156,12 +157,14 @@ async def ws_endpoint(ws: WebSocket):
         )
         tts = ElevenLabsTTSService(
             api_key=os.getenv("ELEVENLABS_API_KEY"),
-            voice_id=os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM"),
+            settings=ElevenLabsTTSService.Settings(
+                voice=os.getenv("ELEVENLABS_VOICE_ID", "EXAVITQu4vr4xnSDxMaL")
+            ),
         )
         llm = GoogleLLMService(
             api_key=os.getenv("GOOGLE_API_KEY"),
             settings=GoogleLLMService.Settings(
-                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite"),
                 system_instruction=system_prompt(),
             ),
         )
@@ -177,7 +180,7 @@ async def ws_endpoint(ws: WebSocket):
             messages=[{"role": "user", "content": "A caller just connected. Greet them briefly."}],
             tools=TOOLS,
         )
-        agg = llm.create_context_aggregator(ctx)
+        agg = LLMContextAggregatorPair(ctx)
 
         pipeline = Pipeline([
             transport.input(),
