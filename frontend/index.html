@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clinic line</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#edf1ef;--ink:#16312f;--mute:#6b807d;--line:#cdd8d5;--phone:#0e3b3a;--sand:#f2c879;--ok:#7ad6b0;--bad:#ef8b7a;
+--f:'Instrument Sans',system-ui,sans-serif;--h:'Bricolage Grotesque',var(--f)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f)}
+main{max-width:1120px;margin:0 auto;padding:32px 20px;display:grid;grid-template-columns:1fr 340px;gap:48px;align-items:start}
+h1{font:700 30px var(--h);letter-spacing:-.02em}h2{font:500 18px var(--h);margin:36px 0 10px}
+.sub{color:var(--mute)}
+.doc{padding:14px 0;border-top:1px solid var(--line)}
+.doc b{font:500 16px var(--h)}.doc span{color:var(--mute);margin-left:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.day{color:var(--mute);font-size:13px;width:64px;padding-top:3px}
+.row{display:flex;gap:8px;align-items:flex-start;width:100%}
+.chip{font-size:13px;padding:2px 9px;border:1px solid var(--line);border-radius:20px;background:#f8faf9}
+table{width:100%;border-collapse:collapse}
+th{font-weight:400;color:var(--mute);text-align:left;font-size:13px;padding:6px 8px 6px 0}
+td{padding:11px 8px 11px 0;border-top:1px solid var(--line)}
+tr.flash td{animation:fl 2.4s ease-out}
+@keyframes fl{0%,40%{background:var(--sand)}100%{background:transparent}}
+.empty{color:var(--mute);padding:14px 0;border-top:1px solid var(--line)}
+aside{position:sticky;top:24px}
+.phone{background:var(--phone);color:#e9f3f1;border-radius:36px;padding:26px 22px;height:640px;display:flex;flex-direction:column;box-shadow:0 30px 60px -30px #0e3b3acc}
+.who{text-align:center}.who .av{width:64px;height:64px;border-radius:50%;background:var(--sand);color:var(--phone);font:700 26px/64px var(--h);margin:0 auto 10px}
+.who b{font:500 20px var(--h);display:block}.status{color:#9cc2bd;font-size:14px;min-height:21px}
+canvas{width:100%;height:56px;margin:10px 0}
+.tx{flex:1;overflow:auto;font-size:14px;display:flex;flex-direction:column;gap:8px;padding:4px 2px;scrollbar-width:none}
+.tx p{max-width:88%;padding:7px 11px;border-radius:14px;background:#164b49}.tx p.u{align-self:flex-end;background:#e9f3f1;color:var(--phone)}
+.card{background:var(--sand);color:var(--phone);border-radius:16px;padding:10px 14px;margin:8px 0;font-size:14px;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+.card.x{background:var(--bad)}@keyframes pop{from{transform:scale(.85);opacity:0}}
+.btns{display:flex;justify-content:center;gap:18px;margin-top:14px}
+.b{width:58px;height:58px;border-radius:50%;border:0;cursor:pointer;font:500 13px var(--f);background:#1d5553;color:#fff}
+.b.on{background:#fff;color:var(--phone)}.b.go{background:var(--ok);color:var(--phone);width:auto;padding:0 28px;border-radius:30px;height:50px;font-size:15px}
+.b.end{background:var(--bad);color:#3a1410}
+.b:focus-visible{outline:2px solid var(--sand);outline-offset:3px}
+.hide{display:none!important}
+@media(max-width:860px){main{grid-template-columns:1fr;gap:12px}aside{position:static;order:-1}.phone{height:560px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body><main>
+<section>
+  <h1>Clinic line</h1><p class="sub">Call Maya to check, book or cancel an appointment.</p>
+  <h2>Doctors</h2><div id="docs"></div>
+  <h2>Appointments</h2>
+  <table><thead><tr><th>Patient</th><th>Doctor</th><th>When</th><th>Phone</th></tr></thead><tbody id="apps"></tbody></table>
+  <div id="none" class="empty">No appointments yet. Start a call to book one.</div>
+</section>
+<aside><div class="phone">
+  <div class="who"><div class="av">M</div><b>Maya</b><div class="status" id="st">Clinic assistant</div></div>
+  <canvas id="wv" width="600" height="112"></canvas>
+  <div class="tx" id="tx" aria-live="polite"></div>
+  <div class="btns">
+    <button class="b go" id="call">Start call</button>
+    <button class="b hide" id="mute">Mute</button>
+    <button class="b end hide" id="end">End</button>
+  </div>
+</div></aside>
+</main>
+<script>
+const $=s=>document.querySelector(s), fmtD=d=>new Date(d+'T00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+let ws,mic,out,proc,stream,muted=false,tick,t0,nextT=0,srcs=[],level=0,live=false,known=null,ringT;
+
+// ---- sounds
+function beep(f,d,v=.08,when=0){const c=new (window.AudioContext||webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();
+ o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(c.destination);o.start(c.currentTime+when);o.stop(c.currentTime+when+d);setTimeout(()=>c.close(),(when+d)*1000+200)}
+const ring=()=>{beep(440,.4);beep(480,.4)}, endTone=()=>{beep(480,.15);beep(350,.3,.08,.18)};
+
+// ---- UI state
+function setState(s,msg){
+ const st=$('#st');$('#call').classList.toggle('hide',s==='connecting'||s==='live');
+ $('#mute').classList.toggle('hide',s!=='live');$('#end').classList.toggle('hide',s!=='live'&&s!=='connecting');
+ $('#call').textContent=s==='ended'?'Call again':'Start call';
+ st.textContent=msg||{idle:'Clinic assistant',connecting:'Calling…',live:'',ended:'Call ended'}[s];
+ live=s==='live';
+}
+function say(role,t){const p=document.createElement('p');p.className=role==='user'?'u':'';p.textContent=t;$('#tx').append(p);$('#tx').scrollTop=1e9}
+function card(txt,x){const c=document.createElement('div');c.className='card'+(x?' x':'');c.textContent=txt;$('#tx').append(c);$('#tx').scrollTop=1e9}
+
+// ---- call
+async function start(){
+ $('#tx').innerHTML='';known=null;setState('connecting');ring();ringT=setInterval(ring,1800);
+ try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,channelCount:1}})}
+ catch(e){clearInterval(ringT);return setState('idle','Allow microphone access to call.')}
+ mic=new AudioContext({sampleRate:16000});out=new AudioContext({sampleRate:24000});
+ ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');ws.binaryType='arraybuffer';
+ ws.onopen=()=>{
+  const src=mic.createMediaStreamSource(stream);proc=mic.createScriptProcessor(2048,1,1);src.connect(proc);proc.connect(mic.destination);
+  proc.onaudioprocess=e=>{const f=e.inputBuffer.getChannelData(0),i=new Int16Array(f.length);let s=0;
+   for(let k=0;k<f.length;k++){const v=Math.max(-1,Math.min(1,f[k]));i[k]=v*32767;s+=v*v}
+   if(!muted){level=Math.max(level,Math.min(1,Math.sqrt(s/f.length)*6));if(ws.readyState===1)ws.send(i.buffer)}};
+  setTimeout(()=>{if(ws.readyState===1){clearInterval(ringT);t0=Date.now();tick=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1e3);
+   $('#st').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500);setState('live','00:00')}},1800)};
+ ws.onmessage=async m=>{
+  if(typeof m.data==='string'){const j=JSON.parse(m.data);
+   if(j.type==='transcript')say(j.role,j.text);
+   if(j.type==='interrupt'){srcs.forEach(s=>{try{s.stop()}catch{}});srcs=[];nextT=0}return}
+  const i=new Int16Array(m.data),b=out.createBuffer(1,i.length,24000),d=b.getChannelData(0);let s=0;
+  for(let k=0;k<i.length;k++){d[k]=i[k]/32768;s+=d[k]*d[k]}level=Math.max(level,Math.min(1,Math.sqrt(s/i.length)*5));
+  const n=out.createBufferSource();n.buffer=b;n.connect(out.destination);nextT=Math.max(nextT,out.currentTime+.05);n.start(nextT);nextT+=b.duration;
+  srcs.push(n);n.onended=()=>{srcs=srcs.filter(x=>x!==n)}};
+ ws.onclose=stop;ws.onerror=stop;
+}
+function stop(){
+ if(!stream)return;clearInterval(ringT);clearInterval(tick);const was=live;
+ try{ws.close()}catch{}stream.getTracks().forEach(t=>t.stop());stream=null;
+ try{proc.disconnect();mic.close();out.close()}catch{}
+ muted=false;$('#mute').textContent='Mute';$('#mute').classList.remove('on');setState('ended');if(was)endTone();
+}
+$('#call').onclick=start;$('#end').onclick=stop;
+$('#mute').onclick=e=>{muted=!muted;e.target.textContent=muted?'Unmute':'Mute';e.target.classList.toggle('on',muted)};
+
+// ---- waveform
+const cv=$('#wv'),cx=cv.getContext('2d');
+(function draw(){cx.clearRect(0,0,600,112);const n=36;cx.fillStyle='#f2c879';
+ for(let i=0;i<n;i++){const h=live?4+level*100*(.35+.65*Math.abs(Math.sin(Date.now()/160+i*.7))):4;
+  cx.fillRect(i*17+4,56-h/2,9,h)}level*=.9;requestAnimationFrame(draw)})();
+
+// ---- data
+async function refresh(){
+ const [d,a]=await Promise.all([fetch('/api/doctors').then(r=>r.json()),fetch('/api/appointments').then(r=>r.json())]);
+ $('#docs').innerHTML=d.map(x=>{const by={};x.slots.forEach(s=>(by[s.date]??=[]).push(s.time));
+  return `<div class="doc"><b>${x.name}</b><span>${x.speciality}</span>`+Object.entries(by).map(([k,v])=>
+  `<div class="chips row"><div class="day">${fmtD(k)}</div><div class="chips" style="margin:0">${v.map(t=>`<span class="chip">${t}</span>`).join('')}</div></div>`).join('')+'</div>'}).join('');
+ const ids=new Set(a.map(x=>x.id));
+ $('#apps').innerHTML=a.map(x=>`<tr class="${known&&!known.has(x.id)?'flash':''}"><td>${x.patient}</td><td>${x.doctor}</td><td>${fmtD(x.date)}, ${x.time}</td><td>${x.phone}</td></tr>`).join('');
+ $('#none').classList.toggle('hide',a.length>0);
+ if(known){a.filter(x=>!known.has(x.id)).forEach(x=>card(`Booked: ${x.doctor}, ${fmtD(x.date)} at ${x.time}`));
+  [...known.values()].filter(x=>!ids.has(x.id)).forEach(x=>card(`Cancelled: ${x.doctor}, ${fmtD(x.date)} at ${x.time}`,1))}
+ known=new Map(a.map(x=>[x.id,x]));known.has=k=>known.get(k)!==undefined;
+}
+setInterval(refresh,1500);refresh();
+</script></body></html>
