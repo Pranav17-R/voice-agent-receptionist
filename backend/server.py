@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from pipecat.adapters.llm.schemas.function_schema import FunctionSchema
 from pipecat.adapters.llm.schemas.tools_schema import ToolsSchema
 from pipecat.audio.vad.silero import SileroVADAnalyzer
+from pipecat.processors.audio.vad_processor import VADProcessor
 from pipecat.frames.frames import (
     AudioRawFrame, InputAudioRawFrame,
     LLMFullResponseEndFrame, LLMFullResponseStartFrame,
@@ -145,7 +146,6 @@ async def ws_endpoint(ws: WebSocket):
             audio_in_enabled=True,
             audio_out_enabled=True,
             add_wav_header=False,
-            vad_analyzer=SileroVADAnalyzer(),
             serializer=PCMSerializer(),
         ),
     )
@@ -182,8 +182,11 @@ async def ws_endpoint(ws: WebSocket):
         )
         agg = LLMContextAggregatorPair(ctx)
 
+        vad = VADProcessor(vad_analyzer=SileroVADAnalyzer())
+
         pipeline = Pipeline([
             transport.input(),
+            vad,
             stt,
             Tap("user", ws),
             agg.user(),
