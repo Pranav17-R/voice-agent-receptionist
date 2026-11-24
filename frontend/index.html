@@ -3,419 +3,692 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CarePoint Clinic • AI Receptionist Assistant</title>
+<title>CarePoint ClinicLine • AI Clinic Receptionist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-subtle: #f1f5f9;
-  --ink: #0f172a;
-  --ink-secondary: #475569;
-  --mute: #64748b;
-  --line: #e2e8f0;
-  --line-strong: #cbd5e1;
+  /* Core Color Palette - Premium Healthcare SaaS */
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --bg-hover: #f8fafc;
   
-  --primary: #059669;
-  --primary-hover: #047857;
-  --primary-light: #ecfdf5;
-  --primary-line: #a7f3d0;
+  --ink-primary: #0f172a;
+  --ink-secondary: #334155;
+  --ink-muted: #64748b;
+  --ink-faint: #94a3b8;
   
-  --phone-bg: #0f172a;
-  --phone-surface: #1e293b;
-  --phone-line: #334155;
-  --phone-text: #f8fafc;
-  --phone-mute: #94a3b8;
+  --border-light: #f1f5f9;
+  --border-base: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-focus: #10b981;
   
-  --emerald: #10b981;
-  --amber: #f59e0b;
-  --rose: #ef4444;
-  --rose-light: #fef2f2;
+  --emerald-50: #ecfdf5;
+  --emerald-100: #d1fae5;
+  --emerald-200: #a7f3d0;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
   
-  --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-600: #2563eb;
+  
+  --amber-50: #fffbeb;
+  --amber-100: #fef3c7;
+  --amber-700: #b45309;
+  
+  --rose-50: #fff1f2;
+  --rose-100: #ffe4e6;
+  --rose-500: #f43f5e;
+  --rose-600: #e11d48;
+  
+  /* AI Phone Console Palette (Luxury Obsidian/Teal) */
+  --console-bg: #090d16;
+  --console-surface: #111827;
+  --console-surface-hover: #1f2937;
+  --console-border: rgba(255, 255, 255, 0.08);
+  --console-border-accent: rgba(16, 185, 129, 0.25);
+  --console-ink: #f8fafc;
+  --console-ink-muted: #94a3b8;
+  
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 32px;
+  /* Shadows & Elevations */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.06), 0 4px 8px -2px rgb(0 0 0 / 0.03);
+  --shadow-console: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 40px -10px rgba(16, 185, 129, 0.15);
   
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.08);
-  --shadow-phone: 0 25px 50px -12px rgba(15, 23, 42, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  /* Curves */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  background-color: var(--bg);
-  color: var(--ink);
-  font: 400 14px/1.6 var(--font-main);
-  min-height: 100vh;
+  background-color: var(--bg-app);
+  color: var(--ink-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ── Top Header ─────────────────────────────────────── */
+/* ── Top Header ─────────────────────────────────────────── */
 header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  padding: 14px 28px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-base);
+  padding: 12px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 50;
+  transition: all 0.2s ease;
 }
-.brand {
+
+.brand-wrapper {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
-.brand-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--emerald) 0%, var(--primary) 100%);
-  border-radius: 10px;
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--emerald-500) 0%, var(--emerald-700) 100%);
+  border-radius: 11px;
   display: grid;
   place-items: center;
-  color: white;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
+  position: relative;
+  overflow: hidden;
 }
-.brand-title {
-  font-weight: 700;
+
+.brand-logo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+}
+
+.brand-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
   font-size: 17px;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-.brand-title span {
-  color: var(--primary);
   font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.header-badge {
-  display: inline-flex;
+
+.brand-name span {
+  color: var(--emerald-600);
+}
+
+.brand-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  letter-spacing: 0.01em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.clinic-hours-pill {
+  display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
-  background: var(--primary-light);
-  border: 1px solid var(--primary-line);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  padding: 5px 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-base);
+  border-radius: 9999px;
+}
+
+.system-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--emerald-50);
+  border: 1px solid var(--emerald-200);
   border-radius: 9999px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--primary-hover);
-}
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--emerald);
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.9); }
+  color: var(--emerald-700);
 }
 
-/* ── Layout ─────────────────────────────────────────── */
+.live-beacon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--emerald-500);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  animation: beaconPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes beaconPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+/* ── Main Dashboard Layout ──────────────────────────────── */
 main {
-  max-width: 1240px;
+  max-width: 1320px;
+  width: 100%;
   margin: 0 auto;
-  padding: 36px 24px;
+  padding: 32px 24px 60px;
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  gap: 36px;
   align-items: start;
 }
 
-/* ── Left Content Panels ────────────────────────────── */
-.panel {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--line);
-  padding: 24px 28px;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 24px;
+.content-column {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
-.panel-header {
+
+/* ── Modern Card Components ─────────────────────────────── */
+.section-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-base);
+  box-shadow: var(--shadow-sm);
+  padding: 24px 26px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.section-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.card-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
 }
-.panel-title {
-  font-size: 18px;
+
+.card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-title {
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  color: var(--ink-primary);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
-.panel-title svg {
-  width: 20px;
-  height: 20px;
-  color: var(--primary);
+
+.card-title-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--emerald-50);
+  color: var(--emerald-600);
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
 }
-.panel-subtitle {
-  color: var(--mute);
+
+.card-subtitle {
   font-size: 13px;
+  color: var(--ink-muted);
   font-weight: 500;
 }
 
-/* ── Doctors Grid ───────────────────────────────────── */
+.badge-counter {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: var(--bg-subtle);
+  color: var(--ink-secondary);
+  border: 1px solid var(--border-base);
+}
+
+/* ── Doctors Roster ─────────────────────────────────────── */
 #docs {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-.doc {
-  background: var(--bg);
-  border: 1px solid var(--line);
+
+.doc-card {
+  background: #ffffff;
+  border: 1px solid var(--border-base);
   border-radius: var(--radius-md);
   padding: 18px 20px;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
-.doc:hover {
-  border-color: var(--primary-line);
-  background: #ffffff;
-  box-shadow: var(--shadow-md);
+
+.doc-card:hover {
+  border-color: var(--emerald-200);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+  transform: translateY(-1px);
 }
-.doc-top {
+
+.doc-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
 }
-.doc-info {
+
+.doc-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
-.doc-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #4338ca;
+
+.doc-avatar-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #1e293b;
   font-weight: 700;
   font-size: 15px;
   display: grid;
   place-items: center;
-}
-.doc b {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
-  display: block;
-}
-.speciality-tag {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--primary);
-  background: var(--primary-light);
-  padding: 2px 10px;
-  border-radius: 9999px;
-  border: 1px solid var(--primary-line);
-}
-.slot-groups {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.slot-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.day-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--mute);
-  width: 82px;
-  flex-shrink: 0;
-}
-.chips-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.chip {
-  font-size: 12px;
-  font-weight: 500;
-  font-family: var(--font-mono);
-  padding: 3px 10px;
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
-  border-radius: 6px;
-  color: var(--ink-secondary);
-  transition: all 0.15s ease;
-}
-.chip:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: var(--primary-light);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-/* ── Appointments Table ─────────────────────────────── */
-.table-container {
-  overflow-x: auto;
+.doc-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink-primary);
 }
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 13px;
-}
-th {
-  background: var(--bg);
-  color: var(--mute);
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  text-align: left;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--line);
-}
-th:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
-th:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--line);
-  color: var(--ink);
-  vertical-align: middle;
-}
-tr:last-child td {
-  border-bottom: none;
-}
-.patient-cell {
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.phone-cell {
-  font-family: var(--font-mono);
-  color: var(--mute);
-  font-size: 12px;
-}
-.status-confirmed {
+
+.doc-speciality-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   font-size: 11px;
   font-weight: 600;
-  color: #065f46;
-  background: #d1fae5;
-  padding: 2px 8px;
+  padding: 2px 9px;
+  border-radius: 9999px;
+  background: var(--emerald-50);
+  color: var(--emerald-700);
+  border: 1px solid var(--emerald-200);
+  margin-top: 2px;
+}
+
+.doc-slots-avail-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--emerald-600);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.slots-grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  background: var(--bg-app);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  border: 1px solid var(--border-light);
+}
+
+.day-slots-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.day-name {
+  width: 88px;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  text-transform: capitalize;
+}
+
+.slots-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.slot-btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-base);
+  border-radius: 6px;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.slot-btn:hover {
+  background: var(--emerald-50);
+  border-color: var(--emerald-500);
+  color: var(--emerald-700);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.12);
+}
+
+.slot-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Appointments Table ─────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-base);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+  background: #ffffff;
+}
+
+th {
+  background: #f8fafc;
+  color: var(--ink-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-base);
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--ink-primary);
+  vertical-align: middle;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background-color: #fafbfc;
+}
+
+.patient-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.patient-mini-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--blue-50);
+  color: var(--blue-600);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--blue-100);
+}
+
+.doctor-name-cell {
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+
+.time-badge-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+}
+
+.phone-badge-cell {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  background: var(--bg-subtle);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-base);
+  display: inline-block;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
   border-radius: 9999px;
 }
-tr.flash td {
-  animation: tableFlash 2.4s ease-out;
+
+.status-badge.confirmed {
+  background: var(--emerald-50);
+  color: var(--emerald-700);
+  border: 1px solid var(--emerald-200);
 }
-@keyframes tableFlash {
+
+tr.flash td {
+  animation: rowHighlight 2.4s ease-out;
+}
+
+@keyframes rowHighlight {
   0%, 30% { background: #fef3c7; }
   100% { background: transparent; }
 }
-.empty-box {
-  padding: 36px 20px;
+
+.empty-state-box {
+  padding: 44px 20px;
   text-align: center;
-  color: var(--mute);
-}
-.empty-icon {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 12px;
-  color: var(--line-strong);
+  color: var(--ink-muted);
 }
 
-/* ── Phone Console (Right Side) ─────────────────────── */
+.empty-state-box svg {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  color: var(--border-strong);
+}
+
+.empty-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  margin-bottom: 4px;
+}
+
+.empty-sub {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+/* ── AI Voice Assistant Console (Right Sticky) ───────────── */
 aside {
   position: sticky;
-  top: 80px;
+  top: 84px;
 }
-.phone {
-  background: var(--phone-bg);
+
+.voice-console-card {
+  background: var(--console-bg);
   border-radius: var(--radius-xl);
-  padding: 28px 24px;
-  height: 680px;
+  padding: 26px 24px;
+  height: 700px;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-phone);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-console);
+  border: 1px solid var(--console-border);
   position: relative;
   overflow: hidden;
 }
-.phone::before {
+
+.voice-console-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--emerald), #3b82f6, var(--emerald));
+  height: 3px;
+  background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #10b981 100%);
   background-size: 200% 100%;
-  animation: gradientShift 6s linear infinite;
+  animation: glowShift 5s linear infinite;
 }
-@keyframes gradientShift {
+
+@keyframes glowShift {
   0% { background-position: 0% 50%; }
   100% { background-position: 200% 50%; }
 }
 
-.phone-header {
+/* Assistant Profile Section */
+.assistant-profile-header {
   text-align: center;
   padding-bottom: 14px;
-  border-bottom: 1px solid var(--phone-line);
-}
-.avatar-wrap {
+  border-bottom: 1px solid var(--console-border);
   position: relative;
-  width: 68px;
-  height: 68px;
-  margin: 0 auto 12px;
 }
-.av {
+
+.ai-avatar-container {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 12px;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.ai-pulse-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px dashed rgba(16, 185, 129, 0.4);
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.3s ease;
+}
+
+.ai-avatar-container.active .ai-pulse-ring {
+  opacity: 1;
+  animation: ringRotate 10s linear infinite;
+}
+
+@keyframes ringRotate {
+  100% { transform: rotate(360deg); }
+}
+
+.ai-avatar-core {
   width: 68px;
   height: 68px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  background: radial-gradient(circle at 35% 35%, #34d399 0%, #059669 65%, #064e3b 100%);
+  color: #ffffff;
   font-weight: 800;
-  font-size: 28px;
-  line-height: 68px;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+  font-size: 26px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.4);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.phone-name {
-  color: var(--phone-text);
-  font-weight: 700;
+
+.ai-avatar-container.active .ai-avatar-core {
+  transform: scale(1.05);
+  box-shadow: 0 0 32px rgba(16, 185, 129, 0.6);
+}
+
+.assistant-name {
   font-size: 18px;
-  letter-spacing: -0.01em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--console-ink);
+  margin-bottom: 4px;
 }
-.status-pill {
-  color: #a7f3d0;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+
+.status-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   font-weight: 600;
   padding: 3px 12px;
   border-radius: 9999px;
-  display: inline-block;
-  margin-top: 6px;
-  min-height: 24px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid var(--console-border-accent);
+  color: #6ee7b7;
+  min-height: 25px;
+}
+
+/* Audio Visualizer Canvas */
+.waveform-box {
+  margin: 12px 0 10px;
+  position: relative;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
 }
 
 canvas#wv {
   width: 100%;
-  height: 52px;
-  margin: 12px 0 8px;
-  border-radius: var(--radius-sm);
-  background: rgba(15, 23, 42, 0.6);
+  height: 50px;
+  display: block;
 }
 
-/* ── Transcript Messages ────────────────────────────── */
+/* Live Conversation Transcript Feed */
 .tx {
   flex: 1;
   overflow-y: auto;
@@ -423,69 +696,78 @@ canvas#wv {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 8px 4px;
+  padding: 8px 4px 8px 0;
   scrollbar-width: thin;
-  scrollbar-color: var(--phone-line) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
+
 .tx::-webkit-scrollbar {
   width: 4px;
 }
+
 .tx::-webkit-scrollbar-thumb {
-  background: var(--phone-line);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 4px;
 }
+
 .tx p {
   max-width: 86%;
-  padding: 9px 14px;
-  border-radius: 16px;
-  background: var(--phone-surface);
-  color: #e2e8f0;
+  padding: 10px 14px;
+  border-radius: 14px;
   line-height: 1.45;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.25s ease-out;
-}
-.tx p.u {
-  align-self: flex-end;
-  background: linear-gradient(135deg, var(--emerald) 0%, var(--primary) 100%);
-  color: #ffffff;
-  border-bottom-right-radius: 4px;
-}
-.tx p:not(.u) {
-  align-self: flex-start;
-  border-bottom-left-radius: 4px;
-  border: 1px solid var(--phone-line);
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  animation: bubblePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  word-break: break-word;
 }
 
-/* ── Pop Cards (Booked / Cancelled) ─────────────────── */
+.tx p.u {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--emerald-600) 0%, var(--emerald-700) 100%);
+  color: #ffffff;
+  border-bottom-right-radius: 3px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.tx p:not(.u) {
+  align-self: flex-start;
+  background: var(--console-surface);
+  color: #f1f5f9;
+  border: 1px solid var(--console-border);
+  border-bottom-left-radius: 3px;
+}
+
+@keyframes bubblePop {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Real-time Confirmation Cards in Chat */
 .card {
   background: #064e3b;
   color: #a7f3d0;
-  border: 1px solid #059669;
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  margin: 6px 0;
+  border: 1px solid #10b981;
+  border-radius: 12px;
+  padding: 11px 14px;
   font-size: 12px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
-  animation: popCard 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: 6px 0;
+  animation: cardEntry 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .card.x {
   background: #450a0a;
   color: #fca5a5;
-  border-color: #dc2626;
-}
-@keyframes popCard {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  border-color: #ef4444;
 }
 
-/* ── Call Control Buttons ───────────────────────────── */
+@keyframes cardEntry {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Call Control Buttons */
 .btns {
   display: flex;
   justify-content: center;
@@ -493,33 +775,36 @@ canvas#wv {
   gap: 16px;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid var(--phone-line);
+  border-top: 1px solid var(--console-border);
 }
+
 .b {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 0;
+  border: none;
   cursor: pointer;
-  font: 600 13px var(--font-main);
-  background: var(--phone-surface);
-  color: #f1f5f9;
+  background: var(--console-surface);
+  color: var(--console-ink);
   display: grid;
   place-items: center;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
+
 .b:hover {
   transform: translateY(-2px);
-  filter: brightness(1.15);
+  filter: brightness(1.2);
 }
+
 .b.on {
-  background: #f8fafc;
-  color: var(--ink);
+  background: #ffffff;
+  color: var(--ink-primary);
 }
+
 .b.go {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--emerald-500) 0%, var(--emerald-600) 100%);
+  color: #ffffff;
   width: auto;
   padding: 0 28px;
   border-radius: 9999px;
@@ -529,105 +814,172 @@ canvas#wv {
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
 }
+
+.b.go:hover {
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.55);
+}
+
 .b.end {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, var(--rose-500) 0%, var(--rose-600) 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(225, 29, 72, 0.45);
 }
+
 .b:focus-visible {
-  outline: 2px solid var(--emerald);
+  outline: 2px solid var(--emerald-500);
   outline-offset: 3px;
 }
+
 .hide { display: none !important; }
 
-@media(max-width: 960px) {
-  main { grid-template-columns: 1fr; gap: 24px; }
-  aside { position: static; order: -1; }
-  .phone { height: 580px; }
+/* ── Responsive Queries ─────────────────────────────────── */
+@media (max-width: 1024px) {
+  main {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  aside {
+    position: static;
+    order: -1;
+  }
+  .voice-console-card {
+    height: 560px;
+  }
 }
-@media(prefers-reduced-motion: reduce) { * { animation: none !important; } }
+
+@media (max-width: 640px) {
+  header {
+    padding: 12px 16px;
+  }
+  .clinic-hours-pill {
+    display: none;
+  }
+  main {
+    padding: 20px 14px 40px;
+  }
+  .section-card {
+    padding: 18px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
 </style>
 </head>
 <body>
 
+<!-- Polished SaaS Header -->
 <header>
-  <div class="brand">
-    <div class="brand-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 6v12m-6-6h12"/>
+  <div class="brand-wrapper">
+    <div class="brand-logo" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14m-7-7h14"/>
       </svg>
     </div>
-    <div>
-      <div class="brand-title">CarePoint <span>ClinicLine</span></div>
+    <div class="brand-text-col">
+      <div class="brand-name">CarePoint <span>ClinicLine</span></div>
+      <div class="brand-desc">Intelligent Voice Reception & Scheduling Platform</div>
     </div>
   </div>
-  <div class="header-badge">
-    <span class="status-dot"></span>
-    <span>AI Receptionist Live</span>
+
+  <div class="header-right">
+    <div class="clinic-hours-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Mon - Sat • 09:00 - 18:00</span>
+    </div>
+    <div class="system-status-badge">
+      <span class="live-beacon"></span>
+      <span>AI Receptionist Live</span>
+    </div>
   </div>
 </header>
 
 <main>
-  <section>
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  <!-- Left Side: Roster & Appointments -->
+  <div class="content-column">
+    
+    <!-- 1. Physician Availability Roster -->
+    <section class="section-card">
+      <div class="card-header-row">
+        <div class="card-title-group">
+          <div class="card-title">
+            <span class="card-title-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
             Available Physicians & Open Slots
           </div>
-          <p class="panel-subtitle">Current schedules synced in real-time with clinic calendar</p>
+          <p class="card-subtitle">Real-time clinic calendar synced with Maya voice receptionist</p>
         </div>
+        <span class="badge-counter" id="docCount">4 Doctors Active</span>
       </div>
-      <div id="docs"></div>
-    </div>
 
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div id="docs"></div>
+    </section>
+
+    <!-- 2. Confirmed Appointments Ledger -->
+    <section class="section-card">
+      <div class="card-header-row">
+        <div class="card-title-group">
+          <div class="card-title">
+            <span class="card-title-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
             Confirmed Appointments
           </div>
-          <p class="panel-subtitle">Bookings confirmed by Maya via voice consultation</p>
+          <p class="card-subtitle">Appointments scheduled or modified live via Maya voice assistant</p>
         </div>
+        <span class="badge-counter" id="appCount">Live Feed</span>
       </div>
-      <div class="table-container">
+
+      <div class="table-wrapper">
         <table>
           <thead>
             <tr>
               <th>Patient</th>
               <th>Physician</th>
               <th>Scheduled Time</th>
-              <th>Contact Phone</th>
+              <th>Phone Number</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody id="apps"></tbody>
         </table>
       </div>
-      <div id="none" class="empty-box">
-        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+
+      <div id="none" class="empty-state-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+          <line x1="10" y1="14" x2="14" y2="18"/>
+          <line x1="14" y1="14" x2="10" y2="18"/>
         </svg>
-        <p style="font-weight:600;margin-bottom:4px">No appointments booked yet</p>
-        <p style="font-size:12px">Click "Start call" on the right to book your doctor's appointment.</p>
+        <div class="empty-title">No appointments scheduled yet</div>
+        <div class="empty-sub">Start a voice call on the right console to book or manage appointments with Maya.</div>
       </div>
-    </div>
-  </section>
+    </section>
 
+  </div>
+
+  <!-- Right Side: AI Voice Assistant Console -->
   <aside>
-    <div class="phone">
-      <div class="phone-header">
-        <div class="avatar-wrap">
-          <div class="av">M</div>
+    <div class="voice-console-card">
+      <div class="assistant-profile-header">
+        <div class="ai-avatar-container" id="avatarBox">
+          <div class="ai-pulse-ring"></div>
+          <div class="ai-avatar-core">M</div>
         </div>
-        <div class="phone-name">Maya AI</div>
-        <div class="status-pill" id="st">Clinic assistant</div>
+        <div class="assistant-name">Maya AI</div>
+        <div class="status-badge-live" id="st">Ready to Connect</div>
       </div>
 
-      <canvas id="wv" width="600" height="112"></canvas>
+      <div class="waveform-box">
+        <canvas id="wv" width="600" height="112"></canvas>
+      </div>
 
       <div class="tx" id="tx" aria-live="polite"></div>
 
@@ -653,7 +1005,7 @@ const fmtD = d => new Date(d + 'T00:00').toLocaleDateString('en-IN', { weekday: 
 
 let ws, mic, out, proc, stream, muted = false, tick, t0, nextT = 0, srcs = [], level = 0, live = false, known = null, ringT;
 
-// ---- Audio Beeps
+// ---- Acoustic Feedback
 function beep(f, d, v = 0.08, when = 0) {
   try {
     const c = new (window.AudioContext || window.webkitAudioContext)();
@@ -671,17 +1023,25 @@ function beep(f, d, v = 0.08, when = 0) {
 const ring = () => { beep(440, 0.4); beep(480, 0.4); };
 const endTone = () => { beep(480, 0.15); beep(350, 0.3, 0.08, 0.18); };
 
-// ---- State Management
+// ---- Visual State Management
 function setState(s, msg) {
   const st = $('#st');
+  const avatarBox = $('#avatarBox');
+  
   $('#call').classList.toggle('hide', s === 'connecting' || s === 'live');
   $('#mute').classList.toggle('hide', s !== 'live');
   $('#end').classList.toggle('hide', s !== 'live' && s !== 'connecting');
+  
   $('#call').innerHTML = s === 'ended' 
     ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></svg> Call again`
     : `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></svg> Start call`;
-  st.textContent = msg || { idle: 'Clinic assistant', connecting: 'Connecting to Maya…', live: 'Connected', ended: 'Call ended' }[s];
+  
+  st.textContent = msg || { idle: 'Ready to Connect', connecting: 'Connecting to Maya…', live: 'Connected', ended: 'Call Ended' }[s];
   live = s === 'live';
+  
+  if (avatarBox) {
+    avatarBox.classList.toggle('active', live || s === 'connecting');
+  }
 }
 
 function say(role, t) {
@@ -703,7 +1063,7 @@ function card(txt, isCancel) {
   $('#tx').scrollTop = 1e9;
 }
 
-// ---- Call Control
+// ---- Call Pipeline Lifecycle
 async function start() {
   $('#tx').innerHTML = '';
   known = null;
@@ -717,7 +1077,7 @@ async function start() {
     });
   } catch (e) {
     clearInterval(ringT);
-    return setState('idle', 'Microphone access denied');
+    return setState('idle', 'Microphone Access Denied');
   }
 
   mic = new AudioContext({ sampleRate: 16000 });
@@ -821,22 +1181,32 @@ $('#mute').onclick = e => {
   e.currentTarget.classList.toggle('on', muted);
 };
 
-// ---- Waveform Visualization
+// ---- Smooth Audio Waveform Canvas Animation
 const cv = $('#wv');
 const cx = cv.getContext('2d');
 (function draw() {
   cx.clearRect(0, 0, 600, 112);
-  const n = 34;
-  cx.fillStyle = '#10b981';
+  const n = 36;
   for (let i = 0; i < n; i++) {
-    const h = live ? 4 + level * 90 * (0.35 + 0.65 * Math.abs(Math.sin(Date.now() / 160 + i * 0.7))) : 4;
-    cx.fillRect(i * 17 + 8, 56 - h / 2, 8, h);
+    const h = live 
+      ? 6 + level * 95 * (0.35 + 0.65 * Math.abs(Math.sin(Date.now() / 160 + i * 0.7)))
+      : 4;
+    
+    // Gradient bar styling
+    const grad = cx.createLinearGradient(0, 56 - h / 2, 0, 56 + h / 2);
+    grad.addColorStop(0, '#34d399');
+    grad.addColorStop(1, '#059669');
+    cx.fillStyle = grad;
+    
+    cx.beginPath();
+    cx.roundRect(i * 16 + 10, 56 - h / 2, 6, h, [3]);
+    cx.fill();
   }
   level *= 0.9;
   requestAnimationFrame(draw);
 })();
 
-// ---- REST Polling & Rendering
+// ---- Live Data Sync
 async function refresh() {
   try {
     const [d, a] = await Promise.all([
@@ -844,26 +1214,37 @@ async function refresh() {
       fetch('/api/appointments').then(r => r.json())
     ]);
 
+    // Render Doctors
+    if ($('#docCount')) $('#docCount').textContent = `${d.length} Doctors Available`;
+    
     $('#docs').innerHTML = d.map(x => {
       const by = {};
       x.slots.forEach(s => (by[s.date] ??= []).push(s.time));
       const initials = x.name.replace('Dr. ', '').split(' ').map(p => p[0]).join('');
+      const totalSlots = x.slots.length;
+      
       return `
-        <div class="doc">
-          <div class="doc-top">
-            <div class="doc-info">
-              <div class="doc-avatar">${initials}</div>
+        <div class="doc-card">
+          <div class="doc-top-bar">
+            <div class="doc-meta">
+              <div class="doc-avatar-badge">${initials}</div>
               <div>
-                <b>${x.name}</b>
-                <span class="speciality-tag">${x.speciality}</span>
+                <div class="doc-name">${x.name}</div>
+                <span class="doc-speciality-pill">${x.speciality}</span>
               </div>
             </div>
+            <div class="doc-slots-avail-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              ${totalSlots} slots free
+            </div>
           </div>
-          <div class="slot-groups">
+          <div class="slots-grid-container">
             ${Object.entries(by).map(([k, v]) => `
-              <div class="slot-row">
-                <div class="day-label">${fmtD(k)}</div>
-                <div class="chips-wrap">${v.map(t => `<span class="chip">${t}</span>`).join('')}</div>
+              <div class="day-slots-row">
+                <div class="day-name">${fmtD(k)}</div>
+                <div class="slots-pill-group">
+                  ${v.map(t => `<button class="slot-btn" onclick="say('user', 'I would like to book ${x.name} on ${k} at ${t}')" title="Click to ask Maya for this slot">${t}</button>`).join('')}
+                </div>
               </div>
             `).join('')}
           </div>
@@ -871,20 +1252,43 @@ async function refresh() {
       `;
     }).join('');
 
+    // Render Appointments
     const ids = new Set(a.map(x => x.id));
-    $('#apps').innerHTML = a.map(x => `
-      <tr class="${known && !known.has(x.id) ? 'flash' : ''}">
-        <td><div class="patient-cell">${x.patient} <span class="status-confirmed">Confirmed</span></div></td>
-        <td><b>${x.doctor}</b></td>
-        <td>${fmtD(x.date)}, ${x.time}</td>
-        <td class="phone-cell">${x.phone}</td>
-      </tr>
-    `).join('');
+    if ($('#appCount')) $('#appCount').textContent = `${a.length} Scheduled`;
+    
+    $('#apps').innerHTML = a.map(x => {
+      const pInitials = (x.patient || 'Caller').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+      return `
+        <tr class="${known && !known.has(x.id) ? 'flash' : ''}">
+          <td>
+            <div class="patient-info-cell">
+              <div class="patient-mini-avatar">${pInitials}</div>
+              <div>${x.patient}</div>
+            </div>
+          </td>
+          <td class="doctor-name-cell">${x.doctor}</td>
+          <td>
+            <div class="time-badge-cell">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ${fmtD(x.date)} • ${x.time}
+            </div>
+          </td>
+          <td><span class="phone-badge-cell">${x.phone}</span></td>
+          <td>
+            <span class="status-badge confirmed">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirmed
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join('');
 
     $('#none').classList.toggle('hide', a.length > 0);
 
+    // Audio/Visual Notification on Booking or Cancel
     if (known) {
-      a.filter(x => !known.has(x.id)).forEach(x => card(`Booked: ${x.doctor}, ${fmtD(x.date)} at ${x.time}`));
+      a.filter(x => !known.has(x.id)).forEach(x => card(`Confirmed: ${x.doctor}, ${fmtD(x.date)} at ${x.time}`));
       [...known.values()].filter(x => !ids.has(x.id)).forEach(x => card(`Cancelled: ${x.doctor}, ${fmtD(x.date)} at ${x.time}`, 1));
     }
     known = new Map(a.map(x => [x.id, x]));
